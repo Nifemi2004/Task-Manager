@@ -9,10 +9,11 @@ import { UserController } from './user.controller';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { UserRepository } from './user.repository';
 
 @Module({
   controllers: [UserController],
-  exports: [UserService],
+  exports: [UserService, MikroOrmModule],
   imports: [MikroOrmModule.forFeature({ entities: [User] })],
   providers: [UserService],
 })

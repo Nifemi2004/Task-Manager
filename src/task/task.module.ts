@@ -4,6 +4,8 @@ import { TaskController } from './task.controller';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Task } from './task.entity';
 import { BullModule } from '@nestjs/bull';
+import { UserRepository } from '../user/user.repository';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -11,8 +13,9 @@ import { BullModule } from '@nestjs/bull';
     BullModule.registerQueue({
       name: 'mail',
     }),
+    UserModule
   ],
-  providers: [TaskService],
+  providers: [TaskService, UserRepository],
   controllers: [TaskController],
 })
 export class TaskModule {}

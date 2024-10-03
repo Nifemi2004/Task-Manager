@@ -13,12 +13,12 @@ export class CreateTaskDto {
   @IsOptional()
   readonly dueDate?: Date;
 
-  @IsOptional()
-  @IsBoolean()
-  reminderEnabled?: boolean;
+  // @IsOptional()
+  // @IsBoolean()
+  // reminderEnabled?: boolean;
 
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  reminderTimeGapMinutes?: number;
+  // @IsOptional()
+  // @IsInt()
+  // @Min(1)
+  // reminderTimeGapMinutes?: number;
 }

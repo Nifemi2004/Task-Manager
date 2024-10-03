@@ -9,12 +9,16 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { Task } from './task.entity';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { AuthGuard } from '../user/auth/auth.guard';
+import { User } from '../user/user.decorator';
+import { IUserData } from '../user/user.interface';
 
 @Controller('tasks')
 @UseGuards(AuthGuard)
@@ -26,39 +30,47 @@ export class TaskController {
   @Post()
   async createTask(
     @Body() createTaskDto: CreateTaskDto,
-    @Param('id', ParseIntPipe) id: number,
+    @User('id') userId: number, // Extracting user ID
   ): Promise<Task> {
     console.log(createTaskDto, 'hello');
-    return this.tasksService.create(createTaskDto, id);
+    return this.tasksService.create(createTaskDto, userId);
   }
 
   @Get()
-  async findAll(): Promise<Task[]> {
-    return this.tasksService.findAll();
+  async findAll(@User('id') userId: number): Promise<Task[]> {
+    return this.tasksService.findAll(userId);
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<Task> {
-    return this.tasksService.findOne(id);
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @User('id') userId: number,
+  ): Promise<Task> {
+    return this.tasksService.findOne(id, userId);
   }
 
   @Get('status/:status')
-  findByStatus(
+  async findByStatus(
     @Param('status') status: 'active' | 'completed',
+    @User('id') userId: number,
   ): Promise<Task[]> {
-    return this.tasksService.findByStatus(status);
+    return this.tasksService.findByStatus(status, userId);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTaskDto: UpdateTaskDto,
+    @User('id') userId: number,
   ): Promise<Task> {
-    return this.tasksService.update(id, updateTaskDto);
+    return this.tasksService.update(id, updateTaskDto, userId);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.tasksService.remove(id);
+  async remove(
+    @Param('id', ParseIntPipe) id: number,
+    @User('id') userId: number,
+  ): Promise<void> {
+    return this.tasksService.remove(id, userId);
   }
 }

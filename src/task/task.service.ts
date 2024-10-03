@@ -1,5 +1,9 @@
 // src/tasks/tasks.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import {
   EntityManager,
@@ -34,26 +38,31 @@ export class TaskService {
       console.log('TaskRepository:', this.repo);
   }
 
-  async findAll(): Promise<Task[]> {
-    return this.repo.findAll();
+  async findAll(userId: number): Promise<Task[]> {
+    return this.repo.find({ user: userId, deletedAt: null });
   }
 
-  async findOne(id: number): Promise<Task> {
-    const task = await this.repo.findOne(id);
+  async findOne(id: number, userId: number): Promise<Task> {
+    const task = await this.repo.findOne({ id, user: userId, deletedAt: null });
     if (!task) {
-      throw new NotFoundException(`Task with ID ${id} not found`);
+      throw new NotFoundException(
+        `Task with ID ${id} not found for the current user`,
+      );
     }
     return task;
   }
 
-  async findByStatus(status: 'active' | 'completed'): Promise<Task[]> {
-    return this.repo.find({ status });
+  async findByStatus(
+    status: 'active' | 'completed',
+    userId: number,
+  ): Promise<Task[]> {
+    return this.repo.find({ status, user: userId });
   }
 
   async create(createTaskDto: CreateTaskDto, userId: number): Promise<Task> {
     const user = await this.userRepository.findOne(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException('User not found');
     }
 
     const task = this.repo.create({
@@ -64,6 +73,7 @@ export class TaskService {
       await this.em.persistAndFlush(task);
     } catch (error) {
       console.log(error);
+      throw new Error('Error creating task');
     }
 
     if (task.dueDate) {
@@ -72,8 +82,12 @@ export class TaskService {
     return task;
   }
 
-  async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task> {
-    const task = await this.findOne(id);
+  async update(
+    id: number,
+    updateTaskDto: UpdateTaskDto,
+    userId: number,
+  ): Promise<Task> {
+    const task = await this.findOne(id, userId);
     const wasCompleted = task.status === Status.Completed;
     this.repo.assign(task, updateTaskDto);
     await this.em.persistAndFlush(task);
@@ -91,9 +105,10 @@ export class TaskService {
     return task;
   }
 
-  async remove(id: number): Promise<void> {
-    const task = await this.findOne(id);
-    await this.em.removeAndFlush(task);
+  async remove(id: number, userId: number): Promise<void> {
+    const task = await this.findOne(id, userId);
+    task.deletedAt = new Date();
+    await this.em.persistAndFlush(task);
   }
 
   async findExpiredTasks(currentTime: Date): Promise<Task[]> {

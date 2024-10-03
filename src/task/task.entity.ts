@@ -33,8 +33,17 @@ export class Task {
   @Property({ default: false })
   isTimerExpired?: boolean = false;
 
-  @ManyToOne()
+  @Property({ nullable: true })
+  deletedAt?: Date;
+
+  @ManyToOne(() => User)
   user!: User;
+
+  @Property({ default: false })
+  reminderEnabled?: boolean;
+
+  @Property({ nullable: true })
+  reminderTimeGapMinutes?: number;
 
   [EntityRepositoryType]?: TaskRepository;
 }

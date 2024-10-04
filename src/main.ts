@@ -8,8 +8,8 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   const options = new DocumentBuilder()
-    .setTitle('NestJS Realworld Example App')
-    .setDescription('The Realworld API description')
+    .setTitle('Task Management API')
+    .setDescription('A simple task management API to demonstrate the usage of authentication and authorization and bull queue')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

@@ -3,31 +3,40 @@ import { Injectable, Logger } from '@nestjs/common';
 import nodemailer from 'nodemailer';
 import { Task } from '../task/task.entity';
 import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { User } from '../user/user.entity';
+import { EntityRepository, MikroORM } from '@mikro-orm/mysql';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
   private transporter: nodemailer.Transporter;
 
-  constructor(private readonly configService: ConfigService) {
-    // Initialize transporter using environment variables
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly orm: MikroORM,
+    @InjectRepository(User)
+    private readonly userRepository: EntityRepository<User>,
+  ) {
     this.transporter = nodemailer.createTransport({
       host: 'localhost',
       port: 1025,
-      secure: false, // true for port 465, false for other ports
-    //   auth: {
-    //     user: this.configService.get<string>('EMAIL_USER'),
-    //     pass: this.configService.get<string>('EMAIL_PASS'),
-    //   },
+      secure: false,
+      //   auth: {
+      //     user: this.configService.get<string>('EMAIL_USER'),
+      //     pass: this.configService.get<string>('EMAIL_PASS'),
+      //   },
     });
   }
 
-  async sendTimerExpiredEmail(task: Task): Promise<void> {
-    const recipient = 'sokooyanifemi@gmail.com';
+  async sendTimerExpiredEmail(task: Task, userEmail: String): Promise<void> {
+    console.log('Entered sendTimerExpiredEmail');
+
 
     const mailOptions: nodemailer.SendMailOptions = {
       from: `"Task Manager" <${this.configService.get<string>('EMAIL_USER')}>`,
-      to: recipient,
+      to: `${userEmail}`,
       subject: `Task Timer Expired: ${task.description}`,
       text: `Hello,
 
@@ -50,7 +59,7 @@ Task Management System`,
     try {
       await this.transporter.sendMail(mailOptions);
       this.logger.log(
-        `Timer expired email sent for Task ID ${task.id} to ${recipient}.`,
+        `Timer expired email sent for Task ID ${task.id} to ${userEmail}.`,
       );
     } catch (error: any) {
       this.logger.error(

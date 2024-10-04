@@ -62,6 +62,7 @@ The Task Management API is a robust backend application built with NestJS, desig
 - Queue Management: Bull (with Redis)
 - Real-Time Communication: Socket.IO
 - API Documentation: Swagger
+- MailHog (Local mail server)
 
 ## Getting Started
 
@@ -119,6 +120,7 @@ Start the Application:
 
 yarn start
 The server should now be running at http://localhost:3000.
+
 
 API Documentation
 Access the Swagger UI for detailed API documentation and testing:
@@ -330,6 +332,12 @@ console.log('Disconnected from WebSocket server.');
 Trigger Reminders:
 
 When a task with reminders enabled reaches the specified time gap before its due date, the server will emit a task-reminder event to the connected user.
+
+Assumption
+The date and time are being saved into the database as UTC which is an hour after the normal time. So when sending dueDate, the frontend should send it an hour before ie 
+2024-10-03T19:00:00.407Z should be sent as 2024-10-03T18:00:00.407Z.
+
+
 
 Name: Sokooya Nifemi
 Happy Coding! 🚀

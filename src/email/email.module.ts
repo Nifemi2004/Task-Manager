@@ -4,6 +4,7 @@ import { BullModule } from '@nestjs/bull';
 import { EmailService } from './email.service';
 import { EmailProcessor } from './email.processor';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
       inject: [ConfigService],
     }),
-    ConfigModule
+    ConfigModule,
+    UserModule
   ],
   providers: [EmailService, EmailProcessor],
   exports: [EmailService],

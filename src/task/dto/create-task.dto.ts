@@ -41,20 +41,20 @@ export class CreateTaskDto {
   @IsDate()
   dueDate?: Date;
 
-  // @ApiPropertyOptional({
-  //   description: 'Enable reminders for the task',
-  //   example: true,
-  // })
-  // @IsOptional()
-  // @IsBoolean()
-  // reminderEnabled?: boolean;
+  @ApiPropertyOptional({
+    description: 'Enable reminders for the task',
+    example: true,
+  })
+  @IsOptional()
+  @IsBoolean()
+  reminderEnabled?: boolean;
 
-  // @ApiPropertyOptional({
-  //   description: 'Time gap in minutes before due date to send a reminder',
-  //   example: 30,
-  // })
-  // @IsOptional()
-  // @IsInt()
-  // @Min(1)
-  // reminderTimeGapMinutes?: number;
+  @ApiPropertyOptional({
+    description: 'Time gap in minutes before due date to send a reminder',
+    example: 30,
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  reminderTimeGapMinutes?: number;
 }

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Task Reminders</title>
+  <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+</head>
+<body>
+  <h1>Task Reminders</h1>
+  <script>
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNva295YW5pZmVtaUBnbWFpbC5jb20iLCJleHAiOjE3MzMxNjQ0MjAuMDU3LCJpZCI6MSwidXNlcm5hbWUiOiJzb2xvbW9uIiwiaWF0IjoxNzI3OTgwNDIwfQ.3qOpIoL9_bkEekHh3kDxEqsa5oA6BzJ8ITk-z8s9mUw'; // Replace with a valid JWT token
+
+    const socket = io('http://localhost:3000', {
+      query: {
+        token,
+      },
+    });
+
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket server.');
+    });
+
+    socket.on('task-reminder', (data) => {
+      alert(data.message);
+      console.log('Received Task Reminder:', data.task);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from WebSocket server.');
+    });
+  </script>
+</body>
+</html>

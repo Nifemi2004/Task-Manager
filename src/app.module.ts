@@ -22,9 +22,15 @@ import { EmailModule } from './email/email.module';
       }),
       inject: [ConfigService],
     }),
-    BullModule.registerQueue({
-      name: 'mail',
-    }),
+    BullModule.registerQueue(
+      {
+        name: 'mail',
+      },
+      {
+        name: 'reminders',
+      },
+    ),
+
     MikroOrmModule.forRoot(),
     UserModule,
     TaskModule,

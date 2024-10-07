@@ -5,9 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start": "nest start",
+    "build": "nest build",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "migrate": "npx mikro-orm-esm migration:create",
+    "migrate:up": "npx mikro-orm-esm migration:up",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest --config=jest.json",
@@ -83,7 +86,6 @@
   },
   "devDependencies": {
     "@mikro-orm/cli": "^6.2.7",
-    "@mikro-orm/seeder": "^6.2.7",
     "@nestjs/cli": "^10.3.2",
     "@nestjs/schematics": "^10.1.1",
     "@nestjs/testing": "^10.3.4",
